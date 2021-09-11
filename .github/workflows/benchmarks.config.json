@@ -1,0 +1,12 @@
+{
+    "profiles": [
+        {
+            "kestrel": {
+                "name": "Kestrel"
+            },
+            "mvc": {
+                "name": "Kestrel"
+            }
+        }
+    ]
+}
