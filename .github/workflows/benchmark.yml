@@ -88,16 +88,14 @@ jobs:
       run: |
         CRANK_PROFILE="aspnet-perf-lin-relay"
         CRANK_CONFIGS="--config https://github.com/aspnet/Benchmarks/blob/main/build/azure.profile.yml?raw=true "
-        CRANK_ARGUMENTS="--config https://raw.githubusercontent.com/aspnet/Benchmarks/main/scenarios/plaintext.benchmarks.yml --scenario plaintext --application.framework net6.0 --application.options.outputFiles ./aspnetcore/artifacts/bin/Microsoft.AspNetCore.Server.Kestrel/release/net6.0/"
+        CRANK_ARGUMENTS="--config https://raw.githubusercontent.com/aspnet/Benchmarks/main/scenarios/plaintext.benchmarks.yml --scenario plaintext --application.framework net6.0 --application.options.outputFiles ./artifacts/bin/Microsoft.AspNetCore.Server.Kestrel/release/net6.0/"
 
         git checkout $GITHUB_BASE_REF
 
         echo "Building Kestrel"
-        cd ./src/Servers/Kestrel
-        ./build.sh -c release
-        cd "$GITHUB_WORKSPACE"
+        ./src/Servers/Kestrel/build.sh -c release
 
-        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json base.json $CRANK_ARGUMENTS
+        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json "$(GITHUB_WORKSPACE)/base.json" $CRANK_ARGUMENTS
 
         git fetch origin pull/${{ github.event.issue.number }}/head
         git config --global user.name "user"
@@ -105,11 +103,9 @@ jobs:
         git merge FETCH_HEAD
 
         echo "Building Kestrel"
-        cd ./src/Servers/Kestrel
-        ./build.sh -c release
-        cd "$GITHUB_WORKSPACE"
+        ./src/Servers/Kestrel/build.sh -c release
 
-        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json head.json $CRANK_ARGUMENTS
+        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json "$(GITHUB_WORKSPACE)/head.json" $CRANK_ARGUMENTS
 
     - name: Benchmark Mvc
       working-directory: ./aspnetcore
@@ -119,17 +115,14 @@ jobs:
       run: |
         CRANK_PROFILE="aspnet-perf-lin-relay"
         CRANK_CONFIGS="--config https://github.com/aspnet/Benchmarks/blob/main/build/azure.profile.yml?raw=true "
-        CRANK_ARGUMENTS="--config https://raw.githubusercontent.com/aspnet/Benchmarks/main/scenarios/plaintext.benchmarks.yml --scenario mvc --application.framework net6.0 --application.options.outputFiles ./aspnetcore/artifacts/bin/Microsoft.AspNetCore.Mvc.IntegrationTests/release/net6.0/"
+        CRANK_ARGUMENTS="--config https://raw.githubusercontent.com/aspnet/Benchmarks/main/scenarios/plaintext.benchmarks.yml --scenario mvc --application.framework net6.0 --application.options.outputFiles ./artifacts/bin/Microsoft.AspNetCore.Mvc.IntegrationTests/release/net6.0/"
 
         git checkout $GITHUB_BASE_REF
 
         echo "Building Mvc"
-        cd ./src/Mvc
-        ./build.sh -c release -NoBuildNodeJS
-        cd "$GITHUB_WORKSPACE/aspnetcore"
+        ./src/Mvc/build.sh -c release -NoBuildNodeJS
 
-
-        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json base.json $CRANK_ARGUMENTS
+        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json "$(GITHUB_WORKSPACE)/base.json" $CRANK_ARGUMENTS
 
         git fetch origin pull/${{ github.event.issue.number }}/head
         git config --global user.name "user"
@@ -137,12 +130,11 @@ jobs:
         git merge FETCH_HEAD
 
         echo "Building Mvc"
-        cd ./src/Mvc
-        ./build.sh -c release -NoBuildNodeJS
+        ./src/Mvc/build.sh -c release -NoBuildNodeJS
+
+        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json "$(GITHUB_WORKSPACE)/head.json" $CRANK_ARGUMENTS
+
         cd "$GITHUB_WORKSPACE"
-
-        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json head.json $CRANK_ARGUMENTS
-
         echo "Arguments:\n```\n$CRANK_ARGUMENTS\n```\n" >> results.txt
         echo "Results:\n```\n" >> results.txt
         crank compare base.json head.json >> results.txt
