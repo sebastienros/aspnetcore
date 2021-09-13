@@ -26,6 +26,8 @@ jobs:
           const repo_name = context.payload.repository.name;
           const comment_user = context.payload.comment.user.login;
 
+          core.notice(`Loading ${context.payload.issue.pull_request.url}.`);
+
           const pull_request = (await github.request(context.payload.issue.pull_request.url)).result.data;
           const target_branch = pull_request.base.ref;
           const source_repository = pull_request.head.repo.clone_url;
@@ -60,19 +62,20 @@ jobs:
 
           const profile = arguments[1];
 
-          const configText = fs.readFile("./benchmarks.config.json");
-          const config = JSON.parse(configText);
+          // const configText = fs.readFile("./benchmarks.config.json");
+          // const config = JSON.parse(configText);
 
+          core.notice(`Profile: ${profile}`);
           config.profiles.forEach(profile => core.warning(profile));
+
+    - name: Install crank
+      run: |
+        dotnet tool install Microsoft.Crank.Controller --version "0.2.0-*" --global
 
     # - name: Checkout
     #   run: |
     #     rm -rf aspnetcore
     #     git clone --recursive ${{ github.event.repository.clone_url }} aspnetcore
-
-    # - name: Install crank
-    #   run: |
-    #     dotnet tool install Microsoft.Crank.Controller --version "0.2.0-*" --global
 
     # - name: Build base
     #   working-directory: ./aspnetcore
