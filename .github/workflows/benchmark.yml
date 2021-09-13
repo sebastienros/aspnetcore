@@ -18,8 +18,6 @@ jobs:
       with:
         result-encoding: string
         script: |
-          const fs = require("fs");
-
           // Verify the user is a collaborator
 
           const repo_owner = context.payload.repository.owner.login;
@@ -61,12 +59,7 @@ jobs:
           }
 
           const profile = arguments[1];
-
-          // const configText = fs.readFile("./benchmarks.config.json");
-          // const config = JSON.parse(configText);
-
           core.info(`Profile: ${profile}`);
-          // config.profiles.forEach(profile => core.warning(profile));
 
           const start_body = `Started benchmarking https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
           await github.issues.createComment({
@@ -150,34 +143,21 @@ jobs:
 
         crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json head.json $CRANK_ARGUMENTS
 
-    - name: Compare benchmarks
-      id: benchmark
-      run: |
-        crank compare base.json head.json > results.txt
-
-        cat results.txt
-
-        export RESULT=$'Results:\n```\n'$(cat results.txt)$'\n```\n'
-
-        RESULT="${RESULT//'%'/'%25'}"
-        RESULT="${RESULT//$'\n'/'%0A'}"
-        RESULT="${RESULT//$'\r'/'%0D'}"
-        RESULT="${RESULT//$'`'/'\`'}"
-        echo $RESULT
-        echo "::set-output name=result::$(echo "$RESULT")"
+        echo "Arguments:\n```\n$CRANK_ARGUMENTS\n```\n" >> results.txt
+        echo "Results:\n```\n" >> results.txt
+        crank compare base.json head.json >> results.txt
+        echo "\n```\n" >> results.txt
 
     - name: Report results
       uses: actions/github-script@v4
       with:
         script: |
-          // The result contains new lines, so the generated script needs to wrap it in back-ticks
-          const body = `${{ steps.benchmark.outputs.result }}`;
+          const fs = require("fs");
+          const results = fs.readFile("./results.txt");
 
           await github.issues.createComment({
             issue_number: context.payload.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: body
+            body: results
           });
-
-
