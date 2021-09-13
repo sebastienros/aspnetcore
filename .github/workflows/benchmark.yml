@@ -95,7 +95,7 @@ jobs:
         echo "Building Kestrel"
         ./src/Servers/Kestrel/build.sh -c release
 
-        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json "$(GITHUB_WORKSPACE)/base.json" $CRANK_ARGUMENTS
+        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json $(GITHUB_WORKSPACE)/base.json $CRANK_ARGUMENTS
 
         git fetch origin pull/${{ github.event.issue.number }}/head
         git config --global user.name "user"
@@ -105,7 +105,7 @@ jobs:
         echo "Building Kestrel"
         ./src/Servers/Kestrel/build.sh -c release
 
-        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json "$(GITHUB_WORKSPACE)/head.json" $CRANK_ARGUMENTS
+        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json $(GITHUB_WORKSPACE)/head.json $CRANK_ARGUMENTS
 
     - name: Benchmark Mvc
       working-directory: ./aspnetcore
@@ -122,7 +122,7 @@ jobs:
         echo "Building Mvc"
         ./src/Mvc/build.sh -c release -NoBuildNodeJS
 
-        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json "$(GITHUB_WORKSPACE)/base.json" $CRANK_ARGUMENTS
+        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json $(GITHUB_WORKSPACE)/base.json $CRANK_ARGUMENTS
 
         git fetch origin pull/${{ github.event.issue.number }}/head
         git config --global user.name "user"
@@ -132,9 +132,9 @@ jobs:
         echo "Building Mvc"
         ./src/Mvc/build.sh -c release -NoBuildNodeJS
 
-        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json "$(GITHUB_WORKSPACE)/head.json" $CRANK_ARGUMENTS
+        crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json $(GITHUB_WORKSPACE)/head.json $CRANK_ARGUMENTS
 
-        cd "$GITHUB_WORKSPACE"
+        cd $GITHUB_WORKSPACE
         echo "Arguments:\n```\n$CRANK_ARGUMENTS\n```\n" >> results.txt
         echo "Results:\n```\n" >> results.txt
         crank compare base.json head.json >> results.txt
