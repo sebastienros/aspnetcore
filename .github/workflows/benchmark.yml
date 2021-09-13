@@ -105,11 +105,14 @@ jobs:
         CRANK_PROFILE="aspnet-perf-lin-relay"
         CRANK_CONFIGS="--config https://github.com/aspnet/Benchmarks/blob/main/build/azure.profile.yml?raw=true --config https://github.com/aspnet/Benchmarks/blob/main/scenarios/aspnet.profiles.yml?raw=true "
 
-        git checkout ${{ steps.target-branch-extractor.outputs.result }}
+        #git checkout ${{ steps.target-branch-extractor.outputs.result }}
+
+        git checkout $GITHUB_BASE_REF
 
         echo "Building Kestrel"
         cd ./src/Servers/Kestrel
         ./build.sh -c release
+        cd "$GITHUB_WORKSPACE"
 
         CRANK_ARGUMENTS="--config https://raw.githubusercontent.com/aspnet/Benchmarks/main/scenarios/plaintext.benchmarks.yml --scenario plaintext --application.framework net6.0 --application.options.outputFiles ./artifacts/bin/Microsoft.AspNetCore.Server.Kestrel/release/net6.0/"
 
@@ -123,6 +126,7 @@ jobs:
         echo "Building Kestrel"
         cd ./src/Servers/Kestrel
         ./build.sh -c release
+        cd "$GITHUB_WORKSPACE"
 
         crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json ../head.json $CRANK_ARGUMENTS
 
@@ -140,6 +144,7 @@ jobs:
         echo "Building Mvc"
         cd ./src/Mvc
         ./build.sh -c release -NoBuildNodeJS
+        cd "$GITHUB_WORKSPACE"
 
         CRANK_ARGUMENTS="--config https://raw.githubusercontent.com/aspnet/Benchmarks/main/scenarios/plaintext.benchmarks.yml --scenario mvc --application.framework net6.0 --application.options.outputFiles ./artifacts/bin/Microsoft.AspNetCore.Mvc.IntegrationTests/release/net6.0/"
 
@@ -153,6 +158,7 @@ jobs:
         echo "Building Mvc"
         cd ./src/Mvc
         ./build.sh -c release -NoBuildNodeJS
+        cd "$GITHUB_WORKSPACE"
 
         crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json ../head.json $CRANK_ARGUMENTS
 
