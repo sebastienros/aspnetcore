@@ -19,7 +19,6 @@ jobs:
         result-encoding: string
         script: |
           const fs = require("fs");
-          const core = require('@actions/core');
 
           // Verify the user is a collaborator
 
@@ -27,7 +26,7 @@ jobs:
           const repo_name = context.payload.repository.name;
           const comment_user = context.payload.comment.user.login;
 
-          core.notice(`Loading ${context.payload.issue.pull_request.url}.`);
+          core.info(`Loading ${context.payload.issue.pull_request.url}.`);
 
           const pull_request = (await github.request(context.payload.issue.pull_request.url)).result.data;
           const target_branch = pull_request.base.ref;
@@ -40,7 +39,7 @@ jobs:
             username: comment_user
           });
 
-          core.notice(`Verified ${comment_user} is a repo collaborator.`);
+          core.info(`Verified ${comment_user} is a repo collaborator.`);
 
           // Verify this action is and PR comment
 
@@ -66,8 +65,16 @@ jobs:
           // const configText = fs.readFile("./benchmarks.config.json");
           // const config = JSON.parse(configText);
 
-          core.notice(`Profile: ${profile}`);
+          core.info(`Profile: ${profile}`);
           config.profiles.forEach(profile => core.warning(profile));
+
+          const start_body = `Started benchmarking https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+          await github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: backport_start_body
+          });
 
     - name: Install crank
       run: |
