@@ -95,8 +95,6 @@ jobs:
         echo "Building Kestrel"
         ./src/Servers/Kestrel/build.sh -c release
 
-        echo "debug path: $GITHUB_WORKSPACE/base.json"
-
         crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json "$GITHUB_WORKSPACE/base.json" $CRANK_ARGUMENTS
 
         git fetch origin pull/${{ github.event.issue.number }}/head
@@ -108,6 +106,13 @@ jobs:
         ./src/Servers/Kestrel/build.sh -c release
 
         crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json "$GITHUB_WORKSPACE/head.json" $CRANK_ARGUMENTS
+
+        echo "Arguments:\n```\n$CRANK_ARGUMENTS\n```\n" >> results.txt
+        echo "Results:\n```\n" >> results.txt
+        crank compare base.json head.json >> results.txt
+        echo "\n```\n" >> results.txt
+
+        cat results.txt
 
     - name: Benchmark Mvc
       working-directory: ./aspnetcore
@@ -141,12 +146,14 @@ jobs:
         crank compare base.json head.json >> results.txt
         echo "\n```\n" >> results.txt
 
+        cat results.txt
+
     - name: Report results
       uses: actions/github-script@v4
       with:
         script: |
           const fs = require("fs");
-          const results = fs.readFile("./results.txt");
+          const results = fs.readFileSync("results.txt");
 
           await github.issues.createComment({
             issue_number: context.payload.issue.number,
