@@ -73,7 +73,7 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: backport_start_body
+            body: start_body
           });
 
     - name: Install crank
