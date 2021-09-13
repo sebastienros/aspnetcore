@@ -94,7 +94,7 @@ jobs:
       if: ${{ steps.benchmark-argument.outputs.result == 'kestrel' }}
       run: |
         CRANK_PROFILE="aspnet-perf-lin-relay"
-        CRANK_CONFIGS="--config https://github.com/aspnet/Benchmarks/blob/main/build/azure.profile.yml?raw=true --config https://github.com/aspnet/Benchmarks/blob/main/scenarios/aspnet.profiles.yml?raw=true "
+        CRANK_CONFIGS="--config https://github.com/aspnet/Benchmarks/blob/main/build/azure.profile.yml?raw=true "
         CRANK_ARGUMENTS="--config https://raw.githubusercontent.com/aspnet/Benchmarks/main/scenarios/plaintext.benchmarks.yml --scenario plaintext --application.framework net6.0 --application.options.outputFiles ./aspnetcore/artifacts/bin/Microsoft.AspNetCore.Server.Kestrel/release/net6.0/"
 
         git checkout $GITHUB_BASE_REF
@@ -125,7 +125,7 @@ jobs:
       if: ${{ steps.benchmark-argument.outputs.result == 'mvc' }}
       run: |
         CRANK_PROFILE="aspnet-perf-lin-relay"
-        CRANK_CONFIGS="--config https://github.com/aspnet/Benchmarks/blob/main/build/azure.profile.yml?raw=true --config https://github.com/aspnet/Benchmarks/blob/main/scenarios/aspnet.profiles.yml?raw=true "
+        CRANK_CONFIGS="--config https://github.com/aspnet/Benchmarks/blob/main/build/azure.profile.yml?raw=true "
         CRANK_ARGUMENTS="--config https://raw.githubusercontent.com/aspnet/Benchmarks/main/scenarios/plaintext.benchmarks.yml --scenario mvc --application.framework net6.0 --application.options.outputFiles ./aspnetcore/artifacts/bin/Microsoft.AspNetCore.Mvc.IntegrationTests/release/net6.0/"
 
         git checkout $GITHUB_BASE_REF
