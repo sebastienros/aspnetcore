@@ -66,7 +66,7 @@ jobs:
           // const config = JSON.parse(configText);
 
           core.info(`Profile: ${profile}`);
-          config.profiles.forEach(profile => core.warning(profile));
+          // config.profiles.forEach(profile => core.warning(profile));
 
           const start_body = `Started benchmarking https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
           await github.issues.createComment({
