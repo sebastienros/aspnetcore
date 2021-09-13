@@ -82,6 +82,15 @@ jobs:
       run: |
         dotnet tool install Microsoft.Crank.Controller --version "0.2.0-*" --global
 
+    - name: Extract target branch
+      uses: actions/github-script@v4
+      id: target-branch-extractor
+      with:
+        script: |
+          const result = await github.request(context.payload.issue.pull_request.url)
+          const pull_request = result.data;
+          return pull_request.base.ref;
+
     - name: Checkout
       run: |
         rm -rf aspnetcore
