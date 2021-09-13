@@ -19,6 +19,7 @@ jobs:
         result-encoding: string
         script: |
           const fs = require("fs");
+          const core = require('@actions/core');
 
           // Verify the user is a collaborator
 
