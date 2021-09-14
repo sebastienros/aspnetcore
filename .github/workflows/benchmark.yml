@@ -57,7 +57,7 @@ jobs:
 
           if (arguments == null || arguments.length < 2 || !availableProfiles.hasOwnProperty(arguments[1])) {
               var body = 'The `/benchmark` command accepts these profiles:\n';
-              for (var key in obj) {
+              for (var key in availableProfiles) {
                 body += `- \`/benchmark ${key}\`: ${availableProfiles[key]}\n`;
               }
 
