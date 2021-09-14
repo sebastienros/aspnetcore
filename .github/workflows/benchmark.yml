@@ -68,7 +68,7 @@ jobs:
                 body: body
               });
 
-              core.error("Invalid arguments, workflow stopped.")
+              throw "Error: Invalid arguments, workflow stopped.";
           }
 
           const profile = arguments[1];
