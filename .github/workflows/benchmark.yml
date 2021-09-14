@@ -155,7 +155,7 @@ jobs:
       with:
         script: |
           const fs = require("fs");
-          const results = fs.readFileSync("results.txt");
+          const results = fs.readFileSync("results.txt", "utf8");
 
           await github.issues.createComment({
             issue_number: context.payload.issue.number,
