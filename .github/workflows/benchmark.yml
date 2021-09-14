@@ -18,6 +18,12 @@ jobs:
       with:
         result-encoding: string
         script: |
+
+          var availableProfiles = {
+            "kestrel": "Runs Plaintext on Kestrel changes.",
+            "mvc": "Runs Plaintext on Mvc changes.",
+          };
+
           // Verify the user is a collaborator
 
           const repo_owner = context.payload.repository.owner.login;
@@ -48,12 +54,17 @@ jobs:
           // extract the benchmark arguments from the trigger phrase containing these characters: a-z, A-Z, digits, forward slash, dot, hyphen, underscore
           const regex = /\/benchmark ([a-zA-Z\d\/\.\-\_]+)/;
           const arguments = regex.exec(context.payload.comment.body);
-          if (arguments == null || (arguments[1] != "kestrel" && arguments[1] != "mvc")) {
+          if (arguments == null || !availableProfiles.hasOwnProperty(arguments[1])) {
+              var body = 'The `/benchmark` command accepts these profiles:\n';
+              for (var key in obj) {
+                body += `\`/benchmark ${key}\`: ${availableProfiles[key]}\n`;
+              }
+
               await github.issues.createComment({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: "The `/benchmark` command must contain a profile from __kestrel__, __mvc__. e.g., `/benchmark kestrel`"
+                body: body
               });
               throw `Error: Invalid benchmark command argument '${arguments[1]}'`;
           }
