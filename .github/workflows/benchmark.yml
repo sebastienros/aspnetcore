@@ -107,9 +107,10 @@ jobs:
 
         crank $CRANK_CONFIGS --profile $CRANK_PROFILE --relay AZURE_RELAY --json "$GITHUB_WORKSPACE/head.json" $CRANK_ARGUMENTS
 
+        cd $GITHUB_WORKSPACE
         echo "Arguments:"$'\n```\n'$"$CRANK_ARGUMENTS"$'\n```\n' >> results.txt
         echo "Results:"$'\n```\n' >> results.txt
-        crank compare "$GITHUB_WORKSPACE/base.json" "$GITHUB_WORKSPACE/head.json" >> results.txt
+        crank compare base.json head.json >> results.txt
         echo $'\n```\n' >> results.txt
 
         cat results.txt
